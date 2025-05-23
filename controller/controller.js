@@ -77,3 +77,37 @@ export const getSavedJob = async (req, res) => {
     });
   }
 };
+
+export const getJobById = async (req, res) => {
+  const { id } = req.body;
+  try {
+    const data = await PostJobModal.findOne({ _id: id.id });
+    res.json({
+      message: "success",
+      job: data,
+    });
+  } catch (error) {
+    console.log(error);
+    res.json({
+      message: error.message,
+    });
+  }
+};
+
+export const IncrementApplicants = async (req, res) => {
+  const { id } = req.body;
+  try {
+    await PostJobModal.findByIdAndUpdate(
+      id.id,
+      { $inc: { appilcants: 1 } },
+      { new: true }
+    );
+    res.json({
+      message: "success",
+    });
+  } catch (error) {
+    res.json({
+      message: error.message,
+    });
+  }
+};
