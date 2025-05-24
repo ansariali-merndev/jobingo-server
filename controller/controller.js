@@ -1,5 +1,6 @@
 import { PostJobModal } from "../model/postJob.js";
 import { SavedJobModal } from "../model/savedJob.js";
+import { ApplicantsModel } from "../model/applicantjob.js";
 
 export const getHome = (req, res) => {
   res.json({
@@ -104,6 +105,49 @@ export const IncrementApplicants = async (req, res) => {
     );
     res.json({
       message: "success",
+    });
+  } catch (error) {
+    res.json({
+      message: error.message,
+    });
+  }
+};
+
+export const applyJob = async (req, res) => {
+  const { title, jobId, description, location, company, userEmail } = req.body;
+  try {
+    const checkUser = await ApplicantsModel.findOne({ userEmail, jobId });
+    if (checkUser) {
+      return res.json({
+        message: "warn",
+      });
+    }
+    await ApplicantsModel.create({
+      title,
+      jobId,
+      description,
+      location,
+      company,
+      userEmail,
+    });
+    res.json({
+      message: "success",
+    });
+  } catch (error) {
+    console.log(error);
+    res.json({
+      message: error.message,
+    });
+  }
+};
+
+export const getApplicantsByUser = async (req, res) => {
+  const { userEmail } = req.body;
+  try {
+    const data = await ApplicantsModel.find({ userEmail });
+    res.json({
+      message: "success",
+      jobs: data,
     });
   } catch (error) {
     res.json({
